@@ -16,4 +16,4 @@ class Contact(Base):
     email: Mapped[str] = mapped_column(String(50))
     phone_number: Mapped[str] = mapped_column(String(50))
     birstday: Mapped[date] = mapped_column("birstday", Date, default=func.now())
-    notes: Mapped[str] = mapped_column(String(500), nullable=False)
+    notes: Mapped[str] = mapped_column(String(500), nullable=True)
