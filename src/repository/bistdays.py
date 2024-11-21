@@ -30,12 +30,23 @@ class BirthdayRepository:
         start_day = today.timetuple().tm_yday
         end_day = (today + timedelta(days=daygap)).timetuple().tm_yday
 
-        stmt = (
-            select(Contact)
-            .filter(extract("doy", Contact.birstday).between(start_day, end_day))
-            .offset(skip)
-            .limit(limit)
-        )
+        if end_day < start_day:
+            stmt = (
+                select(Contact)
+                .filter(
+                    (extract("doy", Contact.birstday) >= start_day)
+                    | (extract("doy", Contact.birstday) <= end_day)
+                )
+                .offset(skip)
+                .limit(limit)
+            )
+        else:
+            stmt = (
+                select(Contact)
+                .filter(extract("doy", Contact.birstday).between(start_day, end_day))
+                .offset(skip)
+                .limit(limit)
+            )
 
         contacts = await self.db.execute(stmt)
         return contacts.scalars().all()
