@@ -19,11 +19,25 @@ class ContactRepository:
     def __init__(self, session: AsyncSession):
         self.db = session
 
-    async def get_contacts(self, skip: int, limit: int) -> List[Contact]:
+    async def get_contacts(
+        self, skip: int, limit: int, search_queue: str | None
+    ) -> List[Contact]:
         """
         Retrieve contacts, skip and limit are used for pagination
         """
-        stmt = select(Contact).offset(skip).limit(limit)
+        if search_queue:
+            stmt = (
+                select(Contact)
+                .filter(
+                    Contact.name.ilike(f"%{search_queue}%")
+                    | Contact.surname.ilike(f"%{search_queue}%")
+                    | Contact.email.ilike(f"%{search_queue}%")
+                )
+                .offset(skip)
+                .limit(limit)
+            )
+        else:
+            stmt = select(Contact).offset(skip).limit(limit)
         contacts = await self.db.execute(stmt)
         return contacts.scalars().all()
 

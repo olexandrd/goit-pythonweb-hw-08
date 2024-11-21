@@ -12,10 +12,13 @@ router = APIRouter(prefix="/contacts", tags=["contacts"])
 
 @router.get("/", response_model=List[ContactResponse])
 async def read_contacts(
-    skip: int = 0, limit: int = 100, db: AsyncSession = Depends(get_db)
+    skip: int = 0,
+    limit: int = 100,
+    queue: str | None = None,
+    db: AsyncSession = Depends(get_db),
 ):
     contact_service = ContactService(db)
-    contacts = await contact_service.get_contacts(skip, limit)
+    contacts = await contact_service.get_contacts(skip, limit, queue)
     return contacts
 
 
