@@ -13,7 +13,7 @@ docker-compose up -d
 Run the following command to start the project:
 
 ```bash
-poetry shell && poetry install && fastapi run
+poetry shell && poetry install && alembic upgrade head && fastapi run
 
 ```
 
